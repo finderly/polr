@@ -16,10 +16,8 @@ class TrustedProxiesMiddleware
     public function handle($request, Closure $next)
     {
         if (env('SETTING_TRUSTED_PROXIES')) {
-            $trustedProxies = env('SETTING_TRUSTED_PROXIES');
-            if ($trustedProxies === '*') {
-                $trustedProxies = '127.0.0.1,' . $request->server->get('REMOTE_ADDR');
-            }
+            $wildcard = '127.0.0.1,' . $request->server->get('REMOTE_ADDR');
+            $trustedProxies = str_replace('*', $wildcard, env('SETTING_TRUSTED_PROXIES'));
             $request->setTrustedProxies(explode(',', $trustedProxies));
         }
         return $next($request);
